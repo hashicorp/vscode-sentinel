@@ -1,0 +1,25 @@
+{
+    "name": "sentinel",
+    "displayName": "HashiCorp Sentinel",
+    "description": "VSCode language support for HashiCorp Sentinel",
+    "version": "0.0.1",
+    "engines": {
+        "vscode": "^1.42.0"
+    },
+    "categories": [
+        "Programming Languages"
+    ],
+    "contributes": {
+        "languages": [{
+            "id": "sentinel",
+            "aliases": ["HashiCorp Sentinel", "sentinel"],
+            "extensions": [".sentinel"],
+            "configuration": "./language-configuration.json"
+        }],
+        "grammars": [{
+            "language": "sentinel",
+            "scopeName": "source.sentinel",
+            "path": "./syntaxes/sentinel.tmlanguage.json"
+        }]
+    }
+}
