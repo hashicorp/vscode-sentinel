@@ -3,10 +3,10 @@
     "displayName": "HashiCorp Sentinel",
     "publisher": "hashicorp-sentinel",
     "description": "VSCode language support for HashiCorp Sentinel",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "repository": "https://github.com/glenngillen/vscode-sentinel.git",
     "engines": {
-        "vscode": "^1.42.0"
+        "vscode": "^1.41.0"
     },
     "categories": [
         "Programming Languages"
