@@ -60,7 +60,7 @@
       "match": "[-+*/%=<>!]"
     },
     {
-      "name": "keyword.operator.natural.sentinel",
+      "name": "keyword.control.sentinel",
       "match": "\\b(and|or|contains|in|is|matches|not|xor|else)\\b"
     },
     {
