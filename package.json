@@ -1,45 +1,45 @@
 {
-    "name": "sentinel",
-    "displayName": "HashiCorp Sentinel",
-    "publisher": "hashicorp-sentinel",
-    "description": "VSCode language support for HashiCorp Sentinel",
-    "version": "0.0.3",
-    "repository": "https://github.com/glenngillen/vscode-sentinel.git",
-    "engines": {
-        "vscode": "^1.41.0"
-    },
-    "categories": [
-        "Programming Languages"
-    ],
-    "contributes": {
-        "languages": [
-            {
-                "id": "sentinel",
-                "aliases": [
-                    "HashiCorp Sentinel",
-                    "sentinel"
-                ],
-                "extensions": [
-                    ".sentinel"
-                ],
-                "configuration": "./language-configuration.json"
-            }
+  "name": "sentinel",
+  "displayName": "HashiCorp Sentinel",
+  "publisher": "hashicorp-sentinel",
+  "description": "VSCode language support for HashiCorp Sentinel",
+  "version": "0.0.3",
+  "repository": "https://github.com/glenngillen/vscode-sentinel.git",
+  "engines": {
+    "vscode": "^1.41.0"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
+  "contributes": {
+    "languages": [
+      {
+        "id": "sentinel",
+        "aliases": [
+          "HashiCorp Sentinel",
+          "sentinel"
         ],
-        "grammars": [
-            {
-                "language": "sentinel",
-                "scopeName": "source.sentinel",
-                "path": "./syntaxes/sentinel.tmlanguage.json"
-            }
-        ]
-    },
-    "scripts": {
-        "test":"npm run test:syntax",
-        "test:syntax": "npm run test:grammar && npm run test:snap",
-        "test:grammar": "npx vscode-tmgrammar-test -s source.sentinel -g syntaxes/sentinel.tmLanguage.json -t tests/unit/**/*.sentinel",
-        "test:snap": "npx vscode-tmgrammar-snap -s source.sentinel -g syntaxes/sentinel.tmlanguage.json -t tests/snapshot/**/*.sentinel"
-    },
-    "devDependencies": {
-        "vscode-tmgrammar-test": "^0.0.11"
-    }
+        "extensions": [
+          ".sentinel"
+        ],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "sentinel",
+        "scopeName": "source.sentinel",
+        "path": "./syntaxes/sentinel.tmlanguage.json"
+      }
+    ]
+  },
+  "scripts": {
+    "test": "npm run test:syntax",
+    "test:syntax": "npm run test:grammar && npm run test:snap",
+    "test:grammar": "npx vscode-tmgrammar-test -s source.sentinel -g ./syntaxes/sentinel.tmlanguage.json -t tests/unit/**/*.sentinel",
+    "test:snap": "npx vscode-tmgrammar-snap -s source.sentinel -g ./syntaxes/sentinel.tmlanguage.json -t tests/snapshot/**/*.sentinel"
+  },
+  "devDependencies": {
+    "vscode-tmgrammar-test": "^0.0.11"
+  }
 }
