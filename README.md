@@ -1,5 +1,7 @@
 # Sentinel Visual Studio Code Extension
 
+<img alt="HashiCorp HCL" src="assets/hashicorp_banner.png" width="600px">
+
 The HashiCorp Sentinel Visual Studio Code extension adds syntax highlighting and other editing features for <a href="https://www.hashicorp.com/sentinel/">Sentinel</a> files.
 
 ## Features

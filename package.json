@@ -1,4 +1,5 @@
 {
+  "icon": "assets/hashicorp_logomark.png",
   "name": "sentinel",
   "displayName": "HashiCorp Sentinel",
   "publisher": "hashicorp",
