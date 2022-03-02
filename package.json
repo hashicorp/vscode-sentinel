@@ -23,9 +23,15 @@
   ],
   "keywords": [
     "devops",
+    "policy",
+    "cloud",
     "sentinel",
     "hcl"
   ],
+  "galleryBanner": {
+    "color": "#000000",
+    "theme": "dark"
+  },
   "contributes": {
     "languages": [
       {
