@@ -23,9 +23,16 @@
   ],
   "keywords": [
     "devops",
+    "policy",
+    "cloud",
+    "terraform",
     "sentinel",
     "hcl"
   ],
+  "galleryBanner": {
+    "color": "#000000",
+    "theme": "dark"
+  },
   "contributes": {
     "languages": [
       {
