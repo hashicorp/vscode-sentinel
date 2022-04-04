@@ -8,6 +8,9 @@
   "license": "MPL-2.0",
   "preview": false,
   "private": true,
+  "syntax": {
+    "version": "0.1.0"
+  },
   "engines": {
     "vscode": "^1.41.0"
   },
@@ -51,19 +54,20 @@
       {
         "language": "sentinel",
         "scopeName": "source.sentinel",
-        "path": "./syntaxes/sentinel.tmlanguage.json"
+        "path": "./syntaxes/sentinel.tmGrammar.json"
       }
     ]
   },
   "scripts": {
-    "package": "vsce package",
-    "test": "npm run test:syntax",
-    "test:syntax": "npm run test:grammar && npm run test:snap",
-    "test:grammar": "npx vscode-tmgrammar-test -s source.sentinel -g syntaxes/sentinel.tmlanguage.json -t tests/unit/**/*.sentinel",
-    "test:snap": "npx vscode-tmgrammar-snap -s source.sentinel -g syntaxes/sentinel.tmlanguage.json -t tests/snapshot/**/*.sentinel"
+    "download:syntax": "ts-node ./build/download-syntax.ts",
+    "compile": "npm run download:syntax",
+    "vscode:prepublish": "npm run download:syntax",
+    "package": "vsce package"
   },
   "devDependencies": {
-    "vsce": "^2.6.6",
-    "vscode-tmgrammar-test": "^0.0.11"
+    "got": "^11.8.3",
+    "ts-node": "^10.7.0",
+    "typescript": "^4.6.3",
+    "vsce": "^2.6.6"
   }
 }
