@@ -2,6 +2,22 @@
 
 ## [Unreleased]
 
+## [0.2.0] (2022-05-10)
+
+## What's Changed
+
+ENHANCEMENTS:
+
+* Bump hashicorp/syntax to 0.2.0 by @jpogran in [#12](https://github.com/hashicorp/vscode-sentinel/pull/12)
+
+INTERNAL:
+
+* Set VS Code Marketplace entry color by @jpogran in [#7](https://github.com/hashicorp/vscode-sentinel/pull/7)
+* Update extension package icon by @jpogran in [#15](https://github.com/hashicorp/vscode-sentinel/pull/15)
+* Bump minimist from 1.2.5 to 1.2.6 by @dependabot in [#10](https://github.com/hashicorp/vscode-sentinel/pull/10)
+* Download Sentinel Grammar by @jpogran in [#11](https://github.com/hashicorp/vscode-sentinel/pull/11)
+* Update README by @jpogran in [#13](https://github.com/hashicorp/vscode-sentinel/pull/13)
+
 ## [0.1.0] (2022-03-02)
 
 ENHANCEMENTS:
@@ -25,5 +41,6 @@ INTERNAL:
 - Initial release
 
 <!-- Links to tag comparisons -->
-[Unreleased]: https://github.com/hashicorp/vscode-sentinel/compare/v0.1.0...main
+[Unreleased]: https://github.com/hashicorp/vscode-sentinel/compare/v0.2.0...main
+[0.2.0]: https://github.com/hashicorp/vscode-sentinel/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/hashicorp/vscode-sentinel/commits/v0.1.0
