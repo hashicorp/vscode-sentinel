@@ -1,5 +1,5 @@
 {
-  "icon": "assets/hashicorp_logo_mark_light.png",
+  "icon": "assets/hashicorp_logo_mark_light_universal_radius45.png",
   "name": "sentinel",
   "displayName": "HashiCorp Sentinel",
   "publisher": "hashicorp",
@@ -33,8 +33,8 @@
     "hcl"
   ],
   "galleryBanner": {
-    "color": "#000000",
-    "theme": "dark"
+    "color": "#FFF",
+    "theme": "light"
   },
   "contributes": {
     "languages": [
