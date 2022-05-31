@@ -2,9 +2,11 @@
 
 ## [Unreleased]
 
-## [0.2.0] (2022-05-10)
+ENHANCEMENTS:
 
-## What's Changed
+* Use theme-universal icon with solid background [#16](https://github.com/hashicorp/vscode-sentinel/pull/16)
+
+## [0.2.0] (2022-05-10)
 
 ENHANCEMENTS:
 
