@@ -1,4 +1,8 @@
-# Change Log
+## [0.2.2] (2022-11-14)
+
+ENHANCEMENTS:
+
+* Update MPL-2.0 LICENSE [#20](https://github.com/hashicorp/vscode-sentinel/pull/20)
 
 ## [0.2.1] (2022-06-02)
 
@@ -44,5 +48,7 @@ INTERNAL:
 
 <!-- Links to tag comparisons -->
 [Unreleased]: https://github.com/hashicorp/vscode-sentinel/compare/v0.2.0...main
+[0.2.2]: https://github.com/hashicorp/vscode-sentinel/compare/v0.2.1...v0.2.2
+[0.2.1]: https://github.com/hashicorp/vscode-sentinel/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/hashicorp/vscode-sentinel/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/hashicorp/vscode-sentinel/commits/v0.1.0
