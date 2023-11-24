@@ -9,7 +9,7 @@
   "preview": false,
   "private": true,
   "syntax": {
-    "version": "0.3.0"
+    "version": "0.4.3"
   },
   "engines": {
     "vscode": "^1.41.0"
