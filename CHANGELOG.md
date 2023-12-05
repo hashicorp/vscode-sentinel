@@ -1,3 +1,14 @@
+## [0.3.0] (2023-12-06)
+
+ENHANCEMENT:
+
+* Update syntax to version to [0.4.3](https://github.com/hashicorp/syntax/releases/tag/v0.4.3) which includes a fix for imports which include a forward slash "/" ([#28](https://github.com/hashicorp/vscode-sentinel/pull/28))
+
+INTERNAL:
+
+* Add Copyright and License Headers ([#25](https://github.com/hashicorp/vscode-sentinel/pull/25))
+* Automated trusted workflow pinning ([#27](https://github.com/hashicorp/vscode-sentinel/pull/27))
+
 ## [0.2.2] (2022-11-14)
 
 ENHANCEMENTS:
@@ -42,12 +53,9 @@ INTERNAL:
 
 **Full Changelog**: https://github.com/hashicorp/vscode-sentinel/commits/v0.1.0
 
-## 0.3.0 (2020-07-16)
-
-- Initial release
-
 <!-- Links to tag comparisons -->
-[Unreleased]: https://github.com/hashicorp/vscode-sentinel/compare/v0.2.0...main
+[Unreleased]: https://github.com/hashicorp/vscode-sentinel/compare/v0.3.0...main
+[0.3.0]: https://github.com/hashicorp/vscode-sentinel/compare/v0.2.2...v0.3.0
 [0.2.2]: https://github.com/hashicorp/vscode-sentinel/compare/v0.2.1...v0.2.2
 [0.2.1]: https://github.com/hashicorp/vscode-sentinel/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/hashicorp/vscode-sentinel/compare/v0.1.0...v0.2.0
