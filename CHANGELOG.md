@@ -2,7 +2,7 @@
 
 ENHANCEMENT:
 
-* Update syntax to latest version ([#28](https://github.com/hashicorp/vscode-sentinel/pull/28))
+* Update syntax to version to [0.4.3](https://github.com/hashicorp/syntax/releases/tag/v0.4.3) which includes a fix for imports which include a forward slash "/" ([#28](https://github.com/hashicorp/vscode-sentinel/pull/28))
 
 INTERNAL:
 
