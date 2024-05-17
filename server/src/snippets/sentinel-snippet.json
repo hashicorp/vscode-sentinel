@@ -1,0 +1,87 @@
+{
+	"Function Snippet TypeA": {
+		"prefix": "func",
+		"body": [
+		  "func ($1){",
+		  "    $0",
+		  "    //return$2",
+		  "}"
+		],
+		"description": "New function"
+	  },
+	  "Function Snippet TypeB": {
+	  "prefix": "func",
+	  "body": [
+		"func functionname$1($2){",
+		"    $0",
+		"    //return$3",
+		"}"
+	  ],
+	  "description": "New function"
+	},
+	"Rule Snippet": {
+		"prefix": "rule",
+		"body": [
+			"rule {",
+			"   //insert rule here",
+			"   $0",
+			"}"
+		],
+		"description": "New Rule"
+	},
+	"Print Snippet": {
+		"prefix": "print",
+		"body":[
+			"print($0)"
+		],
+		"description": "New Print"
+	},
+	"Filter Snippet": { 
+		"prefix": "filter",
+		"body": [
+			"filter collection$1 as item$2{",
+			"    //conditions",
+			"    $0",
+			"}"
+		],
+		"description": "New Filter"
+	},
+	"for Snippet": { 
+		"prefix": "for",
+		"body": [
+			"for collection$1 as item$2 {",
+			"    //statements",
+			"    $0",
+			"}"
+		],
+		"description": "New for statement"
+	},
+	"any Snippet": { 
+		"prefix": "any",
+		"body": [
+			"any collection$1 as item$2 {",
+			"    //statements",
+			"    $0",
+			"}"
+		],
+		"description": "New any statement"
+	},
+	"import Snippet": { 
+		"prefix": "import",
+		"body": [
+			"import $0"
+		],
+		"description": "New import statement"
+	},
+	"main Snippet": { 
+		"prefix": "main",
+		"body": [
+			"main = rule{",
+			"    //insert rule here",
+			"    $0",
+			"}"
+		],
+		"description": "New main statement"
+	}
+  }
+  

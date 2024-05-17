@@ -12,8 +12,12 @@
     "version": "0.4.3"
   },
   "engines": {
-    "vscode": "^1.41.0"
+    "vscode": "^1.75.0"
   },
+  "activationEvents": [
+    "onLanguage:sentinel"
+  ],
+  "main": "./client/out/extension",
   "repository": {
     "type": "git",
     "url": "https://github.com/hashicorp/vscode-sentinel.git"
@@ -56,18 +60,77 @@
         "scopeName": "source.sentinel",
         "path": "./syntaxes/sentinel.tmGrammar.json"
       }
+    ],
+    "configuration": {
+      "type": "object",
+      "title": "Example configuration",
+      "properties": {
+        "languageServerExample.maxNumberOfProblems": {
+          "scope": "resource",
+          "type": "number",
+          "default": 100,
+          "description": "Controls the maximum number of problems produced by the server."
+        },
+        "languageServerExample.trace.server": {
+          "scope": "window",
+          "type": "string",
+          "enum": [
+            "off",
+            "messages",
+            "verbose"
+          ],
+          "default": "off",
+          "description": "Traces the communication between VS Code and the language server."
+        }
+      }
+    },
+    "commands": [
+      {
+        "command": "vscode-sentinel-folder-structure.init",
+        "title": "VSCode-Sentinel : Init"
+      }
     ]
+  },
+  "capabilities": {
+    "completionProvider": {
+      "resolveProvider": "true",
+      "triggerCharacters": [
+        "."
+      ]
+    },
+    "signatureHelpProvider": {
+      "triggerCharacters": [
+        "("
+      ]
+    },
+    "definitionProvider": true
   },
   "scripts": {
     "download:syntax": "ts-node ./build/download-syntax.ts",
     "compile": "npm run download:syntax",
     "vscode:prepublish": "npm run download:syntax",
-    "package": "vsce package"
+    "package": "vsce package",
+    "watch": "tsc -b -w",
+    "lint": "eslint ./client/src ./server/src --ext .ts,.tsx",
+    "postinstall": "cd client && npm install && cd ../server && npm install && cd ..",
+    "test": "sh ./scripts/e2e.sh"
   },
   "devDependencies": {
+    "@types/mocha": "^10.0.6",
+    "@types/node": "^18.14.6",
+    "@typescript-eslint/eslint-plugin": "^7.1.0",
+    "@typescript-eslint/parser": "^7.1.0",
     "got": "^11.8.5",
     "ts-node": "^10.7.0",
     "typescript": "^4.6.3",
     "vsce": "^2.6.6"
-  }
+  },
+  "dependencies": {
+    "axios": "^1.6.8",
+    "bluebird": "^3.7.2",
+    "util": "^0.12.5"
+  },
+  "permissions": [
+    "workspace.fs.writeFile"
+  ]
 }
