@@ -29,6 +29,7 @@ import { exec, execFileSync, execSync } from "child_process";
 import { debug } from "console";
 import * as fs from "fs";
 import { sentinel_functions } from "./snippets/sentinel-functions";
+import * as url from "url";
 const connection = createConnection(ProposedFeatures.all);
 // Create a simple text document manager.
 const documents: TextDocuments<TextDocument> = new TextDocuments(TextDocument);
@@ -179,11 +180,12 @@ async function validateTextDocument(
   textDocument: TextDocument
 ): Promise<Diagnostic[]> {
   const text = textDocument.getText();
-  const path = textDocument.uri.toString();
-  const path_id = path.replace(/\//g, "-");
+  const uri = url.fileURLToPath(url.parse(textDocument.uri).href);
+
+  const path_id = uri.replace(/\//g, "-");
   console.log(path_id);
   try {
-    let command = `sentinel apply abc.sentinel &> run-tmp${path_id}`;
+    let command = `sentinel apply abc.sentinel &> .run-tmp`;
     execSync(command);
   } catch (error) {
     error.status;
@@ -191,23 +193,26 @@ async function validateTextDocument(
     error.stderr;
     error.stdout;
   }
-  let output = fs.readFileSync(`run-tmp${path_id}`).toString();
-  const pattern = /foo/g;
-  let m: RegExpExecArray | null;
-  let problems = 0;
-  let match;
+  let output = fs.readFileSync(`.run-tmp`).toString();
   const diagnostics: Diagnostic[] = [];
-  while ((match = pattern.exec(text))) {
-    const diagnostic: Diagnostic = {
-      severity: DiagnosticSeverity.Error,
-      range: {
-        start: textDocument.positionAt(match.index),
-        end: textDocument.positionAt(match.index + match[0].length),
-      },
-      message: output,
-      source: "ex",
-    };
-    diagnostics.push(diagnostic);
+  const diagnostic: Diagnostic = {
+    severity: DiagnosticSeverity.Error,
+    range: {
+      start: textDocument.positionAt(0),
+      end: textDocument.positionAt(3),
+    },
+    message: output,
+    source: "ex",
+  };
+  diagnostics.push(diagnostic);
+  try {
+    let command = `rm .run-tmp`;
+    execSync(command);
+  } catch (error) {
+    error.status;
+    error.message;
+    error.stderr;
+    error.stdout;
   }
   return diagnostics;
 }
