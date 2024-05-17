@@ -1,6 +1,6 @@
 {
   "icon": "assets/hashicorp_logo_mark_light_universal_radius45.png",
-  "name": "sentinel",
+  "name": "Basic VSCode Sentinel Extension",
   "displayName": "Basic VSCode Sentinel Extension",
   "publisher": "Nagateja",
   "description": "Syntax highlighting for HashiCorp Sentinel",
