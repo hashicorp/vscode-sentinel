@@ -135,15 +135,15 @@ documents.onDidClose((e) => {
   documentSettings.delete(e.document.uri);
 });
 
-const debounce = (callback, wait) => {
-  let timeoutId = null;
-  return (...args) => {
-    clearTimeout(timeoutId);
-    timeoutId = setTimeout(() => {
-      callback(...args);
-    }, wait);
-  };
-};
+// const debounce = (callback, wait) => {
+//   let timeoutId = null;
+//   return (...args) => {
+//     clearTimeout(timeoutId);
+//     timeoutId = setTimeout(() => {
+//       callback(...args);
+//     }, wait);
+//   };
+// };
 
 let showDiag = async (params) => {
   const document = documents.get(params.textDocument.uri);
