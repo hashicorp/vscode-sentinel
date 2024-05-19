@@ -450,5 +450,10 @@ export const sentinel_functions = {
       kind: CompletionItemKind.Keyword,
       data: "undefined",
     },
+    {
+      label: "import",
+      kind: CompletionItemKind.Snippet,
+      data: "import",
+    },
   ],
 };

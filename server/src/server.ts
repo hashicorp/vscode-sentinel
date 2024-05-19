@@ -30,6 +30,8 @@ import { debug } from "console";
 import * as fs from "fs";
 import { sentinel_functions } from "./snippets/sentinel-functions";
 import * as url from "url";
+import { match } from "assert";
+import path = require("path");
 const connection = createConnection(ProposedFeatures.all);
 // Create a simple text document manager.
 const documents: TextDocuments<TextDocument> = new TextDocuments(TextDocument);
@@ -131,7 +133,7 @@ function getDocumentSettings(resource: string): Thenable<ExampleSettings> {
 
 // Only keep settings for open documents
 documents.onDidClose((e) => {
-  console.log("closed");
+  variables = [];
   documentSettings.delete(e.document.uri);
 });
 
@@ -176,16 +178,53 @@ documents.onDidChangeContent(
   }
 );
 
+type ExtractedInfo = {
+  position: number[] | null;
+  content: string;
+};
+
+function extractInfo(input: string): ExtractedInfo {
+  const sentinelPattern = /\.sentinel(:\d+:\d+)?/g;
+  let match: RegExpExecArray | null = null;
+  let lastMatch: RegExpExecArray | null = null;
+
+  // Iterate over all matches to find the last one
+  while ((match = sentinelPattern.exec(input)) !== null) {
+    lastMatch = match;
+  }
+
+  if (!lastMatch) {
+    throw new Error("No '.sentinel' pattern found in the input string.");
+  }
+
+  let position: number[] | null = null;
+  if (lastMatch[1]) {
+    position = lastMatch[1]
+      .substring(1) // Remove the leading colon
+      .split(":") // Split by colon to get line and column numbers
+      .map((num) => parseInt(num, 10)); // Convert each part to an integer
+  }
+
+  const content = input
+    .substring(lastMatch.index! + lastMatch[0].length)
+    .trim();
+
+  return {
+    position,
+    content,
+  };
+}
+
 async function validateTextDocument(
   textDocument: TextDocument
 ): Promise<Diagnostic[]> {
   const text = textDocument.getText();
+  const file_name = textDocument.uri;
   const uri = url.fileURLToPath(url.parse(textDocument.uri).href);
-
-  const path_id = uri.replace(/\//g, "-");
-  console.log(path_id);
+  let path_id = uri.replace(/\s/g, "");
+  path_id = path_id.replace(/\//g, "-").replace(/\.sentinel$/, "");
   try {
-    let command = `sentinel apply abc.sentinel &> .run-tmp`;
+    let command = `sentinel apply "${uri}" &> /tmp/run${path_id}`;
     execSync(command);
   } catch (error) {
     error.status;
@@ -193,20 +232,34 @@ async function validateTextDocument(
     error.stderr;
     error.stdout;
   }
-  let output = fs.readFileSync(`.run-tmp`).toString();
   const diagnostics: Diagnostic[] = [];
+  let output = fs.readFileSync(`/tmp/run${path_id}`).toString();
+  if (output.slice(0, 4) == "Pass") {
+    try {
+      let command = `rm /tmp/run${path_id}`;
+      execSync(command);
+    } catch (error) {
+      error.status;
+      error.message;
+      error.stderr;
+      error.stdout;
+    }
+    return diagnostics;
+  }
+  const { position, content } = extractInfo(output);
   const diagnostic: Diagnostic = {
     severity: DiagnosticSeverity.Error,
     range: {
-      start: textDocument.positionAt(0),
-      end: textDocument.positionAt(3),
+      start: { line: position[0] - 1, character: position[1] - 1 },
+      end: { line: position[0] - 1, character: position[1] + 4 },
     },
-    message: output,
-    source: "ex",
+    message: content,
+    source: path_id,
   };
   diagnostics.push(diagnostic);
+
   try {
-    let command = `rm .run-tmp`;
+    let command = `rm /tmp/run${path_id}`;
     execSync(command);
   } catch (error) {
     error.status;
