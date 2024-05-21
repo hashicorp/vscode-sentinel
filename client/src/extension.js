@@ -11,36 +11,42 @@ var vscode_1 = require("vscode");
 var vscode = require("vscode");
 var node_1 = require("vscode-languageclient/node");
 var client;
-// download syntax file
+// interface ExtensionInfo {
+//   name: string;
+//   extensionVersion: string;
+//   syntaxVersion: string;
+//   preview: false;
+// }
 // function getExtensionInfo(): ExtensionInfo {
-// // eslint-disable-next-line @typescript-eslint/no-var-requires
-// const pjson = require('../../package.json');
-// return {
-//   name: pjson.name,
-//   extensionVersion: pjson.version,
-//   syntaxVersion: pjson.syntax.version,
-//   preview: pjson.preview,
-// };
+//   // eslint-disable-next-line @typescript-eslint/no-var-requires
+//   const pjson = require("../package.json");
+//   return {
+//     name: pjson.name,
+//     extensionVersion: pjson.version,
+//     syntaxVersion: pjson.syntax.version,
+//     preview: pjson.preview,
+//   };
 // }
 // async function run(info: ExtensionInfo) {
-// const release = `v${info.syntaxVersion}`;
-// const fileName = `${info.name}.tmGrammar.json`;
-// const url = `https://github.com/hashicorp/syntax/releases/download/${release}/${fileName}`;
-// console.log(`Downloading: ${url}`);
-// const cwd = path.resolve(__dirname);
-// const buildDir = path.basename(cwd);
-// const repoDir = cwd.replace(buildDir, '');
-// const installPath = path.join(repoDir, 'syntaxes');
-// const fpath = path.join(installPath, fileName);
-// if (fs.existsSync(installPath)) {
-//   fs.rmSync(installPath, { recursive: true, force: true });
+//   const release = `v${info.syntaxVersion}`;
+//   const fileName = `${info.name}.tmGrammar.json`;
+//   const url = `https://github.com/hashicorp/syntax/releases/download/${release}/${fileName}`;
+//   console.log(`Downloading: ${url}`);
+//   const cwd = path.resolve(__dirname);
+//   const buildDir = path.basename(cwd);
+//   const repoDir = cwd.replace(buildDir, "");
+//   const installPath = path.join(repoDir, "syntaxes");
+//   const fpath = path.join(installPath, fileName);
+//   if (fs.existsSync(installPath)) {
+//     fs.rmSync(installPath, { recursive: true, force: true });
+//   }
+//   fs.mkdirSync(installPath);
+//   const content = await got({ url }).text();
+//   fs.writeFileSync(fpath, content);
+//   console.log(`Download completed: ${fpath}`);
 // }
-// fs.mkdirSync(installPath);
-// const content = await got({ url }).text();
-// fs.writeFileSync(fpath, content);
-// console.log(`Download completed: ${fpath}`);
-// }
-//const info = getExtensionInfo();
+// const info = getExtensionInfo();
+// run(info);
 function activate(context) {
     var serverModule = context.asAbsolutePath(path.join("server", "out", "server.js"));
     var serverOptions = {
@@ -51,7 +57,7 @@ function activate(context) {
         }
     };
     var clientOptions = {
-        documentSelector: [{ scheme: "folder", language: "sentinel" }],
+        documentSelector: [{ scheme: "file", language: "sentinel" }],
         synchronize: {
             fileEvents: vscode_1.workspace.createFileSystemWatcher("**/.clientrc")
         }
