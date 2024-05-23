@@ -1,5 +1,5 @@
 import { CompletionItem, CompletionItemKind } from "vscode-languageserver";
-
+import { containsCompletionItem } from "./containsCompletionItems";
 interface variables_object {
   [key: string]: CompletionItem[];
 }
@@ -15,6 +15,10 @@ export const variable_linting = (
       kind: CompletionItemKind.Keyword,
       data: variable,
     };
-    variables[global_path_id].push(variable_completion);
+    if (
+      !containsCompletionItem(variables[global_path_id], variable_completion)
+    ) {
+      variables[global_path_id].push(variable_completion);
+    }
   }
 };

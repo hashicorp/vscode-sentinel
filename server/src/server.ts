@@ -33,6 +33,7 @@ import { validateTextDocument } from "./functions/validate";
 import { snippet_completion } from "./functions/snippet_completion";
 import { variable_linting } from "./functions/variable_linting";
 import { showDiagnostics } from "./functions/showDiagnostics";
+import { containsCompletionItem } from "./functions/containsCompletionItems";
 import * as url from "url";
 import { match } from "assert";
 import path = require("path");
@@ -64,7 +65,7 @@ connection.onInitialize((params: InitializeParams) => {
       // Tell the client that this server supports code completion.
       completionProvider: {
         resolveProvider: true,
-        triggerCharacters: [".", "="],
+        triggerCharacters: [".", "=", "(", ")", "{", "}"],
       },
       diagnosticProvider: {
         interFileDependencies: false,
@@ -166,6 +167,10 @@ connection.onDidChangeWatchedFiles((_change) => {
   // Monitored files have change in VSCode
   connection.console.log("We received a file change event");
 });
+// interface variables_object {
+//   [key: string]: Set<CompletionItem[]>;
+// }
+
 interface variables_object {
   [key: string]: CompletionItem[];
 }
@@ -208,11 +213,21 @@ connection.onCompletion(
     if (snippet_completion_values) {
       return snippet_completion_values;
     }
-    variable_linting(line, variables, global_path_id);
-    const regex = /func\s+(\w+)\s+\(/;
+    const regex = /^func\s+(\w+)\s*\(.*$/;
     if (regex.test(line)) {
-      console.log("Matched");
+      const variable = regex.exec(line)[1];
+      const variable_completion: CompletionItem = {
+        label: variable,
+        kind: CompletionItemKind.Keyword,
+        data: variable,
+      };
+      if (
+        !containsCompletionItem(variables[global_path_id], variable_completion)
+      ) {
+        variables[global_path_id].push(variable_completion);
+      }
     }
+    variable_linting(line, variables, global_path_id);
     return [...variables[global_path_id], ...sentinel_prefix["rest_variables"]];
   }
 );
