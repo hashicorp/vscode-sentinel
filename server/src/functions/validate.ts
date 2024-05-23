@@ -45,7 +45,7 @@ export async function validateTextDocument(
       end: { line: position[0] - 1, character: position[1] + 4 },
     },
     message: content,
-    source: path_id,
+    source: "Sentinel apply",
   };
   diagnostics.push(diagnostic);
 

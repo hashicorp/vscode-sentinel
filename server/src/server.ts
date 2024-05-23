@@ -28,9 +28,11 @@ import { start } from "repl";
 import { exec, execFileSync, execSync } from "child_process";
 import { debug } from "console";
 import * as fs from "fs";
-import { sentinel_functions } from "./snippets/sentinel-functions";
+import { sentinel_prefix } from "./snippets/sentinel-prefix";
 import { validateTextDocument } from "./functions/validate";
 import { snippet_completion } from "./functions/snippet_completion";
+import { variable_linting } from "./functions/variable_linting";
+import { showDiagnostics } from "./functions/showDiagnostics";
 import * as url from "url";
 import { match } from "assert";
 import path = require("path");
@@ -132,11 +134,13 @@ function getDocumentSettings(resource: string): Thenable<ExampleSettings> {
 }
 let global_path_id: string;
 documents.onDidOpen((e) => {
+  let line = e.document.getText();
   const uri = url.fileURLToPath(url.parse(e.document.uri).href);
   let path_id = uri.replace(/\s/g, "");
   path_id = path_id.replace(/\//g, "-").replace(/\.sentinel$/, "");
   global_path_id = path_id;
   variables[global_path_id] = [];
+  variable_linting(line, variables, global_path_id);
 });
 // Only keep settings for open documents
 documents.onDidClose((e) => {
@@ -144,23 +148,9 @@ documents.onDidClose((e) => {
   documentSettings.delete(e.document.uri);
 });
 
-let showDiag = async (params) => {
-  const document = documents.get(params.textDocument.uri);
-  if (document !== undefined) {
-    let diag = await validateTextDocument(document);
-    return {
-      kind: DocumentDiagnosticReportKind.Full,
-      items: diag,
-    } satisfies DocumentDiagnosticReport;
-  } else {
-    return {
-      kind: DocumentDiagnosticReportKind.Full,
-      items: [],
-    } satisfies DocumentDiagnosticReport;
-  }
-};
-
-connection.languages.diagnostics.on(async (params) => await showDiag(params));
+connection.languages.diagnostics.on(
+  async (params) => await showDiagnostics(documents, params)
+);
 
 documents.onDidSave((data: TextDocumentChangeEvent<TextDocument>) => {
   connection.languages.diagnostics.refresh();
@@ -210,7 +200,7 @@ connection.onCompletion(
     for (const func of functions_list) {
       const regex = new RegExp(`${func}\.\s*$`);
       if (regex.test(line)) {
-        return sentinel_functions[func];
+        return sentinel_prefix[func];
       }
     }
     const snippet_completion_values: CompletionItem[] =
@@ -218,23 +208,12 @@ connection.onCompletion(
     if (snippet_completion_values) {
       return snippet_completion_values;
     }
-    if (/^(.*?)=+$/.test(line)) {
-      const variable = line.replace(/^(.*?)=+$/, "$1").trim();
-      const variable_completion: CompletionItem = {
-        label: variable,
-        kind: CompletionItemKind.Keyword,
-        data: variable,
-      };
-      variables[global_path_id].push(variable_completion);
-    }
+    variable_linting(line, variables, global_path_id);
     const regex = /func\s+(\w+)\s+\(/;
     if (regex.test(line)) {
       console.log("Matched");
     }
-    return [
-      ...variables[global_path_id],
-      ...sentinel_functions["rest_variables"],
-    ];
+    return [...variables[global_path_id], ...sentinel_prefix["rest_variables"]];
   }
 );
 

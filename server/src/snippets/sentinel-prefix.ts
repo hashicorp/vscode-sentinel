@@ -1,5 +1,5 @@
 import { CompletionItem, CompletionItemKind } from "vscode-languageserver";
-export const sentinel_functions = {
+export const sentinel_prefix = {
   strings: [
     {
       label: "has_prefix()",
