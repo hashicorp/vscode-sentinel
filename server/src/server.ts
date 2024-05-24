@@ -19,17 +19,24 @@ import {
   Position,
   TextDocumentWillSaveEvent,
   Range,
+  DocumentLink,
 } from "vscode-languageserver/node";
 import { TextDocument } from "vscode-languageserver-textdocument";
 import { attachPartialResult } from "vscode-languageserver/lib/common/progress";
-import * as predefined_snippets from "./snippets/sentinel-snippet.json";
 import { file_list } from "./files-listing";
 import { start } from "repl";
 import { exec, execFileSync, execSync } from "child_process";
 import { debug } from "console";
 import * as fs from "fs";
-import { sentinel_functions } from "./snippets/sentinel-functions";
+import { sentinel_prefix } from "./snippets/sentinel-prefix";
+import { validateTextDocument } from "./functions/validate";
+import { snippet_completion } from "./functions/snippet_completion";
+import { variable_linting } from "./functions/variable_linting";
+import { showDiagnostics } from "./functions/showDiagnostics";
+import { containsCompletionItem } from "./functions/containsCompletionItems";
 import * as url from "url";
+import { match } from "assert";
+import path = require("path");
 const connection = createConnection(ProposedFeatures.all);
 // Create a simple text document manager.
 const documents: TextDocuments<TextDocument> = new TextDocuments(TextDocument);
@@ -58,7 +65,7 @@ connection.onInitialize((params: InitializeParams) => {
       // Tell the client that this server supports code completion.
       completionProvider: {
         resolveProvider: true,
-        triggerCharacters: [".", "="],
+        triggerCharacters: [".", "=", "(", ")", "{", "}"],
       },
       diagnosticProvider: {
         interFileDependencies: false,
@@ -78,7 +85,6 @@ connection.onInitialize((params: InitializeParams) => {
 
 connection.onInitialized(() => {
   if (hasConfigurationCapability) {
-    console.log("Connected");
     // Register for all configuration changes.
     connection.client.register(
       DidChangeConfigurationNotification.type,
@@ -113,7 +119,6 @@ connection.onDidChangeConfiguration((change) => {
   }
   connection.languages.diagnostics.refresh();
 });
-
 function getDocumentSettings(resource: string): Thenable<ExampleSettings> {
   if (!hasConfigurationCapability) {
     return Promise.resolve(globalSettings);
@@ -128,44 +133,26 @@ function getDocumentSettings(resource: string): Thenable<ExampleSettings> {
   }
   return result;
 }
-
+let global_path_id: string;
+documents.onDidOpen((e) => {
+  let line = e.document.getText();
+  const uri = url.fileURLToPath(url.parse(e.document.uri).href);
+  let path_id = uri.replace(/\s/g, "");
+  path_id = path_id.replace(/\//g, "-").replace(/\.sentinel$/, "");
+  global_path_id = path_id;
+  variables[global_path_id] = [];
+  variable_linting(line, variables, global_path_id);
+});
 // Only keep settings for open documents
 documents.onDidClose((e) => {
-  console.log("closed");
+  variables[global_path_id] = [];
   documentSettings.delete(e.document.uri);
 });
 
-// const debounce = (callback, wait) => {
-//   let timeoutId = null;
-//   return (...args) => {
-//     clearTimeout(timeoutId);
-//     timeoutId = setTimeout(() => {
-//       callback(...args);
-//     }, wait);
-//   };
-// };
+connection.languages.diagnostics.on(
+  async (params) => await showDiagnostics(documents, params)
+);
 
-let showDiag = async (params) => {
-  const document = documents.get(params.textDocument.uri);
-  if (document !== undefined) {
-    let diag = await validateTextDocument(document);
-    return {
-      kind: DocumentDiagnosticReportKind.Full,
-      items: diag,
-    } satisfies DocumentDiagnosticReport;
-  } else {
-    // We don't know the document. We can either try to read it from disk
-    // or we don't report problems for it.
-    return {
-      kind: DocumentDiagnosticReportKind.Full,
-      items: [],
-    } satisfies DocumentDiagnosticReport;
-  }
-};
-
-connection.languages.diagnostics.on(async (params) => await showDiag(params));
-
-let output;
 documents.onDidSave((data: TextDocumentChangeEvent<TextDocument>) => {
   connection.languages.diagnostics.refresh();
 });
@@ -176,53 +163,18 @@ documents.onDidChangeContent(
   }
 );
 
-async function validateTextDocument(
-  textDocument: TextDocument
-): Promise<Diagnostic[]> {
-  const text = textDocument.getText();
-  const uri = url.fileURLToPath(url.parse(textDocument.uri).href);
-
-  const path_id = uri.replace(/\//g, "-");
-  console.log(path_id);
-  try {
-    let command = `sentinel apply abc.sentinel &> .run-tmp`;
-    execSync(command);
-  } catch (error) {
-    error.status;
-    error.message;
-    error.stderr;
-    error.stdout;
-  }
-  let output = fs.readFileSync(`.run-tmp`).toString();
-  const diagnostics: Diagnostic[] = [];
-  const diagnostic: Diagnostic = {
-    severity: DiagnosticSeverity.Error,
-    range: {
-      start: textDocument.positionAt(0),
-      end: textDocument.positionAt(3),
-    },
-    message: output,
-    source: "ex",
-  };
-  diagnostics.push(diagnostic);
-  try {
-    let command = `rm .run-tmp`;
-    execSync(command);
-  } catch (error) {
-    error.status;
-    error.message;
-    error.stderr;
-    error.stdout;
-  }
-  return diagnostics;
-}
-
 connection.onDidChangeWatchedFiles((_change) => {
   // Monitored files have change in VSCode
   connection.console.log("We received a file change event");
 });
-var variables: CompletionItem[] = [],
-  func_name;
+// interface variables_object {
+//   [key: string]: Set<CompletionItem[]>;
+// }
+
+interface variables_object {
+  [key: string]: CompletionItem[];
+}
+var variables: variables_object = {};
 const functions_list: string[] = [
   "strings",
   "json",
@@ -235,11 +187,16 @@ const functions_list: string[] = [
 // This handler provides the initial list of the completion items.
 connection.onCompletion(
   (_textDocumentPosition: TextDocumentPositionParams): CompletionItem[] => {
+    const uri = url.fileURLToPath(
+      url.parse(_textDocumentPosition.textDocument.uri).href
+    );
+    let path_id = uri.replace(/\s/g, "");
+    path_id = path_id.replace(/\//g, "-").replace(/\.sentinel$/, "");
+    global_path_id = path_id;
     const document = documents.get(_textDocumentPosition.textDocument.uri);
     if (!document) {
       return [];
     } // Ensure the document is available
-    var snippetCompletion: CompletionItem;
     let line = document.getText({
       start: { line: _textDocumentPosition.position.line, character: 0 },
       end: _textDocumentPosition.position,
@@ -248,47 +205,30 @@ connection.onCompletion(
     for (const func of functions_list) {
       const regex = new RegExp(`${func}\.\s*$`);
       if (regex.test(line)) {
-        return sentinel_functions[func];
+        return sentinel_prefix[func];
       }
     }
-
-    if (/=\s*func\b.*$/.test(line)) {
-      snippetCompletion = {
-        label: predefined_snippets["Function Snippet TypeA"].description,
-        kind: CompletionItemKind.Snippet,
-        insertText:
-          predefined_snippets["Function Snippet TypeA"].body.join("\n"),
-        insertTextFormat: InsertTextFormat.Snippet,
-      };
-      return [snippetCompletion];
+    const snippet_completion_values: CompletionItem[] =
+      snippet_completion(line);
+    if (snippet_completion_values) {
+      return snippet_completion_values;
     }
-    const rest_snippets = removeFirstElement(predefined_snippets);
-    for (const snippet of Object.keys(rest_snippets)) {
-      const reg_exp = new RegExp(`${rest_snippets[snippet].prefix}s*$`);
-      if (reg_exp.test(line)) {
-        snippetCompletion = {
-          label: rest_snippets[snippet].description,
-          kind: CompletionItemKind.Method,
-          insertText: rest_snippets[snippet].body.join("\n"),
-          insertTextFormat: InsertTextFormat.Snippet,
-        };
-        return [snippetCompletion];
-      }
-    }
-    if (/^(.*?)=+$/.test(line)) {
-      const variable = line.replace(/^(.*?)=+$/, "$1");
+    const regex = /^func\s+(\w+)\s*\(.*$/;
+    if (regex.test(line)) {
+      const variable = regex.exec(line)[1];
       const variable_completion: CompletionItem = {
         label: variable,
         kind: CompletionItemKind.Keyword,
         data: variable,
       };
-      variables.push(variable_completion);
+      if (
+        !containsCompletionItem(variables[global_path_id], variable_completion)
+      ) {
+        variables[global_path_id].push(variable_completion);
+      }
     }
-    const regex = /func\s+(\w+)\s+\(/;
-    if (regex.test(line)) {
-      console.log("Matched");
-    }
-    return [...variables, ...sentinel_functions["rest_variables"]];
+    variable_linting(line, variables, global_path_id);
+    return [...variables[global_path_id], ...sentinel_prefix["rest_variables"]];
   }
 );
 
@@ -300,10 +240,6 @@ connection.onCompletionResolve((item: CompletionItem): CompletionItem => {
   return item;
 });
 
-function removeFirstElement<T>(obj: Record<string, T>): Record<string, T> {
-  const { [Object.keys(obj)[0]]: _, ...rest } = obj;
-  return rest;
-}
 documents.listen(connection);
 
 // Listen on the connection

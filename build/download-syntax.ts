@@ -3,9 +3,9 @@
  * SPDX-License-Identifier: MPL-2.0
  */
 
-import * as fs from 'fs';
-import * as path from 'path';
-import got from 'got';
+import * as fs from "fs";
+import * as path from "path";
+import got from "got";
 
 interface ExtensionInfo {
   name: string;
@@ -16,7 +16,7 @@ interface ExtensionInfo {
 
 function getExtensionInfo(): ExtensionInfo {
   // eslint-disable-next-line @typescript-eslint/no-var-requires
-  const pjson = require('../package.json');
+  const pjson = require("../package.json");
   return {
     name: pjson.name,
     extensionVersion: pjson.version,
@@ -29,13 +29,13 @@ async function run(info: ExtensionInfo) {
   const release = `v${info.syntaxVersion}`;
 
   const fileName = `${info.name}.tmGrammar.json`;
-  const url = `https://github.com/hashicorp/syntax/releases/download/${release}/${fileName}`;
+  const url = `http://localhost:8000/sentinel.tmGrammar.json`;
   console.log(`Downloading: ${url}`);
 
   const cwd = path.resolve(__dirname);
   const buildDir = path.basename(cwd);
-  const repoDir = cwd.replace(buildDir, '');
-  const installPath = path.join(repoDir, 'syntaxes');
+  const repoDir = cwd.replace(buildDir, "");
+  const installPath = path.join(repoDir, "syntaxes");
 
   const fpath = path.join(installPath, fileName);
   if (fs.existsSync(installPath)) {
