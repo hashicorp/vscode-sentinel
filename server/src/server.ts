@@ -22,14 +22,7 @@ import {
   DocumentLink,
 } from "vscode-languageserver/node";
 import { TextDocument } from "vscode-languageserver-textdocument";
-import { attachPartialResult } from "vscode-languageserver/lib/common/progress";
-import { file_list } from "./files-listing";
-import { start } from "repl";
-import { exec, execFileSync, execSync } from "child_process";
-import { debug } from "console";
-import * as fs from "fs";
 import { sentinel_prefix } from "./snippets/sentinel-prefix";
-import { validateTextDocument } from "./functions/validate";
 import { snippet_completion } from "./functions/snippet_completion";
 import { variable_linting } from "./functions/variable_linting";
 import { showDiagnostics } from "./functions/showDiagnostics";
