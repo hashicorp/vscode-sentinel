@@ -35,7 +35,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", { value: true });
 exports.validateTextDocument = void 0;
 var node_1 = require("vscode-languageserver/node");
 var url = require("url");
@@ -83,10 +83,10 @@ function validateTextDocument(textDocument) {
                 severity: node_1.DiagnosticSeverity.Error,
                 range: {
                     start: { line: position[0] - 1, character: position[1] - 1 },
-                    end: { line: position[0] - 1, character: position[1] + 4 }
+                    end: { line: position[0] - 1, character: position[1] + 4 },
                 },
                 message: content,
-                source: path_id
+                source: "Sentinel apply",
             };
             diagnostics.push(diagnostic);
             try {
@@ -126,6 +126,6 @@ function extractInfo(input) {
     content = input.substring(lastMatch.index + lastMatch[0].length).trim();
     return {
         position: position,
-        content: content
+        content: content,
     };
 }

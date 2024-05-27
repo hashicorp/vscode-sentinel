@@ -1,8 +1,4 @@
 "use strict";
-/* --------------------------------------------------------------------------------------------
- * Copyright (c) Microsoft Corporation. All rights reserved.
- * Licensed under the MIT License. See License.txt in the project root for license information.
- * ------------------------------------------------------------------------------------------ */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -40,46 +36,28 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var vscode = require("vscode");
-var assert = require("assert");
-var helper_1 = require("./helper");
-suite('Should do completion', function () {
-    var docUri = (0, helper_1.getDocUri)('completion.txt');
-    test('Completes JS/TS in txt file', function () { return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, testCompletion(docUri, new vscode.Position(0, 0), {
-                        items: [
-                            { label: 'JavaScript', kind: vscode.CompletionItemKind.Text },
-                            { label: 'TypeScript', kind: vscode.CompletionItemKind.Text }
-                        ]
-                    })];
-                case 1:
-                    _a.sent();
-                    return [2 /*return*/];
-            }
-        });
-    }); });
-});
-function testCompletion(docUri, position, expectedCompletionList) {
-    return __awaiter(this, void 0, void 0, function () {
-        var actualCompletionList;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, (0, helper_1.activate)(docUri)];
-                case 1:
-                    _a.sent();
-                    return [4 /*yield*/, vscode.commands.executeCommand('vscode.executeCompletionItemProvider', docUri, position)];
-                case 2:
-                    actualCompletionList = (_a.sent());
-                    assert.ok(actualCompletionList.items.length >= 2);
-                    expectedCompletionList.items.forEach(function (expectedItem, i) {
-                        var actualItem = actualCompletionList.items[i];
-                        assert.equal(actualItem.label, expectedItem.label);
-                        assert.equal(actualItem.kind, expectedItem.kind);
-                    });
-                    return [2 /*return*/];
-            }
-        });
+exports.showDiagnostics = void 0;
+var vscode_languageserver_1 = require("vscode-languageserver");
+var validate_1 = require("./validate");
+var showDiagnostics = function (documents, params) { return __awaiter(void 0, void 0, void 0, function () {
+    var document, diag;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                document = documents.get(params.textDocument.uri);
+                if (!(document !== undefined)) return [3 /*break*/, 2];
+                return [4 /*yield*/, (0, validate_1.validateTextDocument)(document)];
+            case 1:
+                diag = _a.sent();
+                return [2 /*return*/, {
+                        kind: vscode_languageserver_1.DocumentDiagnosticReportKind.Full,
+                        items: diag,
+                    }];
+            case 2: return [2 /*return*/, {
+                    kind: vscode_languageserver_1.DocumentDiagnosticReportKind.Full,
+                    items: [],
+                }];
+        }
     });
-}
+}); };
+exports.showDiagnostics = showDiagnostics;

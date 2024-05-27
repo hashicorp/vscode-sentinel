@@ -1,10 +1,10 @@
 {
   "icon": "assets/hashicorp_logo_mark_light_universal_radius45.png",
-  "name": "sentinel",
-  "displayName": "HashiCorp Sentinel",
-  "publisher": "hashicorp",
+  "name": "basicvscodesentinelextension",
+  "displayName": "Basic VSCode Sentinel Extension",
+  "publisher": "Nagateja",
   "description": "Syntax highlighting for HashiCorp Sentinel",
-  "version": "0.3.0",
+  "version": "0.3.6",
   "license": "MPL-2.0",
   "preview": false,
   "private": true,
@@ -120,7 +120,7 @@
     "got": "^11.8.5",
     "ts-node": "^10.7.0",
     "typescript": "^4.6.3",
-    "vsce": "^2.6.6"
+    "vsce": "^2.15.0"
   },
   "dependencies": {
     "axios": "^1.6.8",

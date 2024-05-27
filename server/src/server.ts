@@ -152,7 +152,6 @@ documents.onDidSave((data: TextDocumentChangeEvent<TextDocument>) => {
 
 documents.onDidChangeContent(
   (change: TextDocumentChangeEvent<TextDocument>) => {
-    //connection.languages.diagnostics.refresh();
   }
 );
 

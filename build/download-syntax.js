@@ -39,7 +39,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", { value: true });
 var fs = require("fs");
 var path = require("path");
 var got_1 = require("got");
@@ -50,7 +50,7 @@ function getExtensionInfo() {
         name: pjson.name,
         extensionVersion: pjson.version,
         syntaxVersion: pjson.syntax.version,
-        preview: pjson.preview
+        preview: pjson.preview,
     };
 }
 function run(info) {
@@ -72,7 +72,7 @@ function run(info) {
                         fs.rmSync(installPath, { recursive: true, force: true });
                     }
                     fs.mkdirSync(installPath);
-                    return [4 /*yield*/, (0, got_1["default"])({ url: url }).text()];
+                    return [4 /*yield*/, (0, got_1.default)({ url: url }).text()];
                 case 1:
                     content = _a.sent();
                     fs.writeFileSync(fpath, content);

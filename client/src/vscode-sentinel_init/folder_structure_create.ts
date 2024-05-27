@@ -19,7 +19,6 @@ export function create_folder_structure() {
           createDirectory(dirPath);
           structure.forEach((dir) => {
             const folderDirPath = path.join(dirPath, dir);
-            vscode.window.showInformationMessage(folderDirPath);
             createDirectory(folderDirPath);
           });
           files.forEach(([filePath, content]) => {

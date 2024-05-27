@@ -44,11 +44,14 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
     }
     return to.concat(ar || Array.prototype.slice.call(from));
 };
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", { value: true });
 var node_1 = require("vscode-languageserver/node");
 var vscode_languageserver_textdocument_1 = require("vscode-languageserver-textdocument");
-var sentinel_functions_1 = require("./snippets/sentinel-functions");
-var validate_1 = require("./functions/validate");
+var sentinel_prefix_1 = require("./snippets/sentinel-prefix");
+var snippet_completion_1 = require("./functions/snippet_completion");
+var variable_linting_1 = require("./functions/variable_linting");
+var showDiagnostics_1 = require("./functions/showDiagnostics");
+var containsCompletionItems_1 = require("./functions/containsCompletionItems");
 var url = require("url");
 var connection = (0, node_1.createConnection)(node_1.ProposedFeatures.all);
 // Create a simple text document manager.
@@ -69,19 +72,19 @@ connection.onInitialize(function (params) {
             // Tell the client that this server supports code completion.
             completionProvider: {
                 resolveProvider: true,
-                triggerCharacters: [".", "="]
+                triggerCharacters: [".", "=", "(", ")", "{", "}"],
             },
             diagnosticProvider: {
                 interFileDependencies: false,
-                workspaceDiagnostics: false
-            }
-        }
+                workspaceDiagnostics: false,
+            },
+        },
     };
     if (hasWorkspaceFolderCapability) {
         result.capabilities.workspace = {
             workspaceFolders: {
-                supported: true
-            }
+                supported: true,
+            },
         };
     }
     return result;
@@ -119,7 +122,7 @@ function getDocumentSettings(resource) {
     if (!result) {
         result = connection.workspace.getConfiguration({
             scopeUri: resource,
-            section: "languageServerExample"
+            section: "languageServerExample",
         });
         documentSettings.set(resource, result);
     }
@@ -127,42 +130,22 @@ function getDocumentSettings(resource) {
 }
 var global_path_id;
 documents.onDidOpen(function (e) {
+    var line = e.document.getText();
     var uri = url.fileURLToPath(url.parse(e.document.uri).href);
     var path_id = uri.replace(/\s/g, "");
     path_id = path_id.replace(/\//g, "-").replace(/\.sentinel$/, "");
     global_path_id = path_id;
-    console.log(global_path_id);
     variables[global_path_id] = [];
+    (0, variable_linting_1.variable_linting)(line, variables, global_path_id);
 });
 // Only keep settings for open documents
 documents.onDidClose(function (e) {
     variables[global_path_id] = [];
-    documentSettings["delete"](e.document.uri);
+    documentSettings.delete(e.document.uri);
 });
-var showDiag = function (params) { return __awaiter(void 0, void 0, void 0, function () {
-    var document, diag;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                document = documents.get(params.textDocument.uri);
-                if (!(document !== undefined)) return [3 /*break*/, 2];
-                return [4 /*yield*/, (0, validate_1.validateTextDocument)(document)];
-            case 1:
-                diag = _a.sent();
-                return [2 /*return*/, {
-                        kind: node_1.DocumentDiagnosticReportKind.Full,
-                        items: diag
-                    }];
-            case 2: return [2 /*return*/, {
-                    kind: node_1.DocumentDiagnosticReportKind.Full,
-                    items: []
-                }];
-        }
-    });
-}); };
 connection.languages.diagnostics.on(function (params) { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
     switch (_a.label) {
-        case 0: return [4 /*yield*/, showDiag(params)];
+        case 0: return [4 /*yield*/, (0, showDiagnostics_1.showDiagnostics)(documents, params)];
         case 1: return [2 /*return*/, _a.sent()];
     }
 }); }); });
@@ -198,29 +181,33 @@ connection.onCompletion(function (_textDocumentPosition) {
     } // Ensure the document is available
     var line = document.getText({
         start: { line: _textDocumentPosition.position.line, character: 0 },
-        end: _textDocumentPosition.position
+        end: _textDocumentPosition.position,
     });
     for (var _i = 0, functions_list_1 = functions_list; _i < functions_list_1.length; _i++) {
         var func = functions_list_1[_i];
         var regex_1 = new RegExp("".concat(func, ".s*$"));
         if (regex_1.test(line)) {
-            return sentinel_functions_1.sentinel_functions[func];
+            return sentinel_prefix_1.sentinel_prefix[func];
         }
     }
-    if (/^(.*?)=+$/.test(line)) {
-        var variable = line.replace(/^(.*?)=+$/, "$1").trim();
+    var snippet_completion_values = (0, snippet_completion_1.snippet_completion)(line);
+    if (snippet_completion_values) {
+        return snippet_completion_values;
+    }
+    var regex = /^func\s+(\w+)\s*\(.*$/;
+    if (regex.test(line)) {
+        var variable = regex.exec(line)[1];
         var variable_completion = {
             label: variable,
             kind: node_1.CompletionItemKind.Keyword,
-            data: variable
+            data: variable,
         };
-        variables[global_path_id].push(variable_completion);
+        if (!(0, containsCompletionItems_1.containsCompletionItem)(variables[global_path_id], variable_completion)) {
+            variables[global_path_id].push(variable_completion);
+        }
     }
-    var regex = /func\s+(\w+)\s+\(/;
-    if (regex.test(line)) {
-        console.log("Matched");
-    }
-    return __spreadArray(__spreadArray([], variables[global_path_id], true), sentinel_functions_1.sentinel_functions["rest_variables"], true);
+    (0, variable_linting_1.variable_linting)(line, variables, global_path_id);
+    return __spreadArray(__spreadArray([], variables[global_path_id], true), sentinel_prefix_1.sentinel_prefix["rest_variables"], true);
 });
 connection.onCompletionResolve(function (item) {
     if (item.data === 1) {

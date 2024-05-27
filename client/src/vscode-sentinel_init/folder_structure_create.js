@@ -1,5 +1,5 @@
 "use strict";
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", { value: true });
 exports.create_folder_structure = void 0;
 var vscode = require("vscode");
 var path = require("path");
@@ -11,7 +11,7 @@ function create_folder_structure() {
     vscode.window
         .showInputBox({
         prompt: "Enter the name of the project",
-        placeHolder: "Project Name"
+        placeHolder: "Project Name",
     })
         .then(function (dirname) {
         var workspaceFolders = vscode.workspace.workspaceFolders;
