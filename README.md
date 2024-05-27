@@ -14,3 +14,11 @@ The HashiCorp Sentinel Extension for Visual Studio Code adds syntax highlighting
 ## Credits
 
 - [Glenn Gillen](https://github.com/glenngillen) - for creating a starting point and inspiration for this extension.
+
+## Changes did by Nagateja2402
+
+1. Implemented the Sentinel: Init Command so that it create a directory structure for sentinel policies with empty files.
+2. Implemented snippet completion for
+   - func, rule, main, for, any, print, filter
+3. Implemented variable hinting when the variables are declared.
+4. Implemented error displaying to the user when they save the current sentinel file.
