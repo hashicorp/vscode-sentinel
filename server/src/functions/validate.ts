@@ -3,8 +3,8 @@ import { Diagnostic, DiagnosticSeverity } from "vscode-languageserver/node";
 import * as url from "url";
 import * as fs from "fs";
 import * as os from "os";
-import { exec,execSync } from "child_process";
-import path = require('path');
+import { exec, execSync } from "child_process";
+import path = require("path");
 export async function validateTextDocument(
   textDocument: TextDocument
 ): Promise<Diagnostic[]> {
@@ -12,27 +12,26 @@ export async function validateTextDocument(
   const file_name = textDocument.uri;
   const uri = url.fileURLToPath(url.parse(textDocument.uri).href);
   let path_id = uri.replace(/\s/g, "");
-  path_id = path_id.replace(/\//g, "-").replace(/\\/g,"-").replace(/\.sentinel$/, "");
+  path_id = path_id
+    .replace(/\//g, "-")
+    .replace(/\\/g, "-")
+    .replace(/\.sentinel$/, "");
   const platform = os.platform();
   let removeCmd;
-  if(platform=='win32')
-  {
-    path_id = path.join(os.tmpdir(),`${path_id}`);
-    removeCmd = `del /Q ${path_id}`
-  }
-  else 
-  {
-    path_id = `/tmp/run${path_id}`;
-    removeCmd = `rm ${path_id}`
+  if (platform == "win32") {
+    path_id = path.join(os.tmpdir(), `${path_id}`);
+    removeCmd = `del /Q ${path_id}`;
+  } else {
+    path_id = `/tmp/.run${path_id}`;
+    removeCmd = `rm ${path_id}`;
   }
   try {
     let command = `sentinel apply "${uri}" > ${path_id}`;
     execSync(command);
-  } catch (error){}
+  } catch (error) {}
   const diagnostics: Diagnostic[] = [];
   let output = fs.readFileSync(`${path_id}`).toString();
   if (output.slice(0, 4) == "Pass") {
-    exec(removeCmd);
     return diagnostics;
   }
   const { position, content } = extractInfo(output);

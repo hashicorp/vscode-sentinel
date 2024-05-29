@@ -151,8 +151,7 @@ documents.onDidSave((data: TextDocumentChangeEvent<TextDocument>) => {
 });
 
 documents.onDidChangeContent(
-  (change: TextDocumentChangeEvent<TextDocument>) => {
-  }
+  (change: TextDocumentChangeEvent<TextDocument>) => {}
 );
 
 connection.onDidChangeWatchedFiles((_change) => {
