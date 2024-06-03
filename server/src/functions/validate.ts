@@ -35,7 +35,8 @@ export async function validateTextDocument(
     return diagnostics;
   }
   const { position, content } = extractInfo(output);
-  if (!position && !content) {
+  console.log(position, content);
+  if (!position) {
     return diagnostics;
   }
   const diagnostic: Diagnostic = {

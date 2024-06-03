@@ -61,7 +61,7 @@ function run(info) {
                 case 0:
                     release = "v".concat(info.syntaxVersion);
                     fileName = "".concat(info.name, ".tmGrammar.json");
-                    url = "http://localhost:8000/sentinel.tmGrammar.json";
+                    url = "https://github.com/hashicorp/syntax/releases/download/".concat(release, "/").concat(fileName);
                     console.log("Downloading: ".concat(url));
                     cwd = path.resolve(__dirname);
                     buildDir = path.basename(cwd);

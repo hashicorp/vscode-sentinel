@@ -27,9 +27,10 @@ function getExtensionInfo(): ExtensionInfo {
 
 async function run(info: ExtensionInfo) {
   const release = `v${info.syntaxVersion}`;
-
   const fileName = `${info.name}.tmGrammar.json`;
-  const url = `http://localhost:8000/sentinel.tmGrammar.json`;
+  const url = "https://github.com/hashicorp/syntax/releases/download/"
+    .concat(release, "/")
+    .concat(fileName);
   console.log(`Downloading: ${url}`);
 
   const cwd = path.resolve(__dirname);
