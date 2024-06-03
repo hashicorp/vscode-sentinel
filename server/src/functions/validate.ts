@@ -35,8 +35,12 @@ export async function validateTextDocument(
     return diagnostics;
   }
   const { position, content } = extractInfo(output);
-  console.log(position, content);
-  if (!position) {
+  console.log(content.slice(0, 6));
+  if (
+    !position ||
+    content.slice(0, 6) == "Import" ||
+    content.slice(2, 8) == "Import"
+  ) {
     return diagnostics;
   }
   const diagnostic: Diagnostic = {

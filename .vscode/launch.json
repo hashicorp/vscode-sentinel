@@ -10,16 +10,11 @@
       "request": "launch",
       "name": "Launch Client",
       "runtimeExecutable": "${execPath}",
-      "args": ["--extensionDevelopmentPath=${workspaceRoot}"],
+      "args": ["--extensionDevelopmentPath=${workspaceFolder}"],
       "outFiles": [
         "${workspaceRoot}/client/out/**/*.js",
         "${workspaceRoot}/server/out/**/*.js"
-      ],
-      "autoAttachChildProcesses": true,
-      "preLaunchTask": {
-        "type": "npm",
-        "script": "watch"
-      }
+      ]
     },
     {
       "name": "Extension",
