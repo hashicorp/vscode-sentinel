@@ -1,15 +1,5 @@
 {
-	"Function Snippet TypeA": {
-		"prefix": "func",
-		"body": [
-		  "func ($1){",
-		  "    $0",
-		  "    //return$2",
-		  "}"
-		],
-		"description": "New function"
-	  },
-	  "Function Snippet TypeB": {
+	  "Function Snippet": {
 	  "prefix": "func",
 	  "body": [
 		"func functionname$1($2){",
@@ -84,4 +74,3 @@
 		"description": "New main statement"
 	}
   }
-  

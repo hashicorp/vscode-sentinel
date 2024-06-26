@@ -23,7 +23,6 @@ import {
 } from "vscode-languageserver/node";
 import { TextDocument } from "vscode-languageserver-textdocument";
 import { sentinel_prefix } from "./snippets/sentinel-prefix";
-import { snippet_completion } from "./functions/snippet_completion";
 import { variable_linting } from "./functions/variable_linting";
 import { showDiagnostics } from "./functions/showDiagnostics";
 import { containsCompletionItem } from "./functions/containsCompletionItems";
@@ -85,9 +84,7 @@ connection.onInitialized(() => {
     );
   }
   if (hasWorkspaceFolderCapability) {
-    connection.workspace.onDidChangeWorkspaceFolders((_event) => {
-      connection.console.log("Workspace folder change event received.");
-    });
+    connection.workspace.onDidChangeWorkspaceFolders((_event) => {});
   }
 });
 
@@ -154,14 +151,6 @@ documents.onDidChangeContent(
   (change: TextDocumentChangeEvent<TextDocument>) => {}
 );
 
-connection.onDidChangeWatchedFiles((_change) => {
-  // Monitored files have change in VSCode
-  connection.console.log("We received a file change event");
-});
-// interface variables_object {
-//   [key: string]: Set<CompletionItem[]>;
-// }
-
 interface variables_object {
   [key: string]: CompletionItem[];
 }
@@ -198,11 +187,6 @@ connection.onCompletion(
       if (regex.test(line)) {
         return sentinel_prefix[func];
       }
-    }
-    const snippet_completion_values: CompletionItem[] =
-      snippet_completion(line);
-    if (snippet_completion_values) {
-      return snippet_completion_values;
     }
     const regex = /^func\s+(\w+)\s*\(.*$/;
     if (regex.test(line)) {

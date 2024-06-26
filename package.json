@@ -23,7 +23,8 @@
     "url": "https://github.com/hashicorp/vscode-sentinel/issues"
   },
   "categories": [
-    "Programming Languages"
+    "Programming Languages",
+    "Snippets"
   ],
   "keywords": [
     "devops",
@@ -85,6 +86,12 @@
       {
         "command": "vscode-sentinel-folder-structure.init",
         "title": "VSCode-Sentinel : Init"
+      }
+    ],
+    "snippets": [
+      {
+        "language": "sentinel",
+        "path": "./snippets/snippets.json"
       }
     ]
   },

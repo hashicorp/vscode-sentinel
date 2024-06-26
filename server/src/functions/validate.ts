@@ -35,7 +35,6 @@ export async function validateTextDocument(
     return diagnostics;
   }
   const { position, content } = extractInfo(output);
-  console.log(content.slice(0, 6));
   if (
     !position ||
     content.slice(0, 6) == "Import" ||
@@ -66,7 +65,6 @@ function extractInfo(input: string): ExtractedInfo {
   let match: RegExpExecArray | null = null;
   let lastMatch: RegExpExecArray | null = null;
 
-  // Iterate over all matches to find the last one
   while ((match = sentinelPattern.exec(input)) !== null) {
     lastMatch = match;
   }
@@ -78,9 +76,9 @@ function extractInfo(input: string): ExtractedInfo {
 
   if (lastMatch[1]) {
     position = lastMatch[1]
-      .substring(1) // Remove the leading colon
-      .split(":") // Split by colon to get line and column numbers
-      .map((num) => parseInt(num, 10)); // Convert each part to an integer
+      .substring(1)
+      .split(":")
+      .map((num) => parseInt(num, 10));
   }
 
   content = input.substring(lastMatch.index! + lastMatch[0].length).trim();

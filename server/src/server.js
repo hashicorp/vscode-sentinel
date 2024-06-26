@@ -96,7 +96,6 @@ connection.onInitialized(function () {
     }
     if (hasWorkspaceFolderCapability) {
         connection.workspace.onDidChangeWorkspaceFolders(function (_event) {
-            connection.console.log("Workspace folder change event received.");
         });
     }
 });
