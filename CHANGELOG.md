@@ -1,3 +1,10 @@
+## Unreleased
+
+ENHANCEMENT:
+
+* Update sentinel syntax highlighting ([syntax#141](https://github.com/hashicorp/syntax/pull/141))
+* Add snap tests for sentinel language ([syntax#139](https://github.com/hashicorp/syntax/pull/139))
+
 ## [0.3.0] (2023-12-05)
 
 ENHANCEMENT:
